@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+torch
+diffusers
+# Add other dependencies as needed
