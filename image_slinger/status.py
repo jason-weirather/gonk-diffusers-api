@@ -1,9 +1,22 @@
 import torch
 
-def check_cuda_status():
-    # Your code to check CUDA availability and memory
-    # Return status information
-    print("Is CUDA available:", torch.cuda.is_available())
-    print("CUDA device count:", torch.cuda.device_count())
-    print("Current CUDA Device:", torch.cuda.current_device())
-    print("CUDA Device Name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+def check_cuda_status(app):
+    status_info = {
+        "cuda_available": torch.cuda.is_available(),
+        "cuda_device_count": torch.cuda.device_count(),
+        "current_cuda_device_info": {},
+        "model_info": {}
+    }
+
+    if status_info["cuda_available"]:
+        current_cuda_device = torch.cuda.current_device()
+        status_info['current_cuda_device_info'].update({
+            "current_cuda_device": current_cuda_device,
+            "cuda_device_name": torch.cuda.get_device_name(current_cuda_device),
+            "max_memory": torch.cuda.get_device_properties(current_cuda_device).total_memory,
+            "available_memory": torch.cuda.get_device_properties(current_cuda_device).total_memory - torch.cuda.memory_allocated(current_cuda_device)
+        })
+
+    if hasattr(app, 'global_model') and app.global_model is not None:
+        status_info['model_info'].update(dict(app.global_model.config))
+    return status_info

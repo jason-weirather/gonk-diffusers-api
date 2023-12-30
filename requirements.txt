@@ -1,5 +1,5 @@
-fastapi
-uvicorn
+flask
 torch
 diffusers
+Pillow
 # Add other dependencies as needed

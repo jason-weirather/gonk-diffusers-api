@@ -16,11 +16,13 @@ setup(
     url='https://github.com/jason-weirather/ImageSlinger',
     packages=find_packages(),
     install_requires=load_requirements(),
+
     entry_points={
         'console_scripts': [
-            'image-slinger=image_slinger.cli:start_server',
+            'image-slinger=image_slinger.cli:main',
         ],
     },
+
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: Apache Software License',
