@@ -8,9 +8,11 @@ Image-Slinger is a Python API transforms text prompts into vivid images using ma
 
 The goal is to simplify the process of exposing CUDA-compatible NVIDIA GPUs with limited memory resources through an API, it can be accessed with concurency control and memory cleanup so you can use your own GPU resources as simply as API services provided by services like OpenAI and Stability AI.
 
-#### Example Request
+#### Example request in a Jupyter notebook
 ```python
 import requests
+import base64
+from IPython.display import Image, display
 
 url = 'http://localhost:8000/generate-image'
 data = {
@@ -24,7 +26,20 @@ data = {
     'safety': True
 }
 response = requests.post(url, json=data)
-# Handle the response...
+response_data = response.json()
+
+# Check the response and display the image
+if response.status_code == 200 and 'image' in response_data:
+    encoded_image = response_data['image']
+    mime_type = response_data['mime_type']
+    
+    # Decode the Base64 string to bytes
+    image_bytes = base64.b64decode(encoded_image)
+    
+    # Display the image
+    display(Image(data=image_bytes, format=mime_type.split('/')[-1], embed=True))
+else:
+    print("Failed to generate image:", response.text)
 ```
 <img src="https://i.imgur.com/BEjjkQ5.png" width="300" height="300" alt="Example image">
 
