@@ -3,3 +3,4 @@ torch==2.1.2
 diffusers==0.24.0
 Pillow==10.1.0
 transformers==4.36.2
+flask-swagger-ui

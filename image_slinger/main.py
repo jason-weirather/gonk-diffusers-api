@@ -1,18 +1,40 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from image_slinger.image_generator import generate_image, load_model, unload_model
 from image_slinger.status import check_cuda_status
 import io
 import base64
+import os
 from threading import Lock
-
-# Initialize the lock for synchronizing image generation requests
-generate_image_lock = Lock()
+from flask_swagger_ui import get_swaggerui_blueprint
 
 # Default model to be used if not specified in the request
 default_model = "dataautogpt3/OpenDalleV1.1"
 
-# Initialize Flask application
+# Initialize the lock and Flask app
+generate_image_lock = Lock()
 app = Flask(__name__)
+
+# Function to correctly determine the directory of the static files
+def get_static_dir():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(current_dir, 'static')
+
+app.static_folder = get_static_dir()
+
+# Swagger UI configuration
+SWAGGER_URL = '/swagger'
+API_URL = '/static/openapi.yaml'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={'app_name': "Image Slinger API"},
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    """Custom static file server."""
+    return send_from_directory(app.static_folder, path)
 
 # Routes
 @app.route('/status', methods=['GET'])
@@ -30,7 +52,7 @@ def generate_image_endpoint():
     width = data.get('width', 512)  # Default width if not specified
     height = data.get('height', 512)  # Default height if not specified
     image_type = data.get('image_type', 'png').lower()  # Default to PNG if not specified
-    num_inference_steps = data.get('num_inference_steps', 50)
+    num_inference_steps = data.get('num_inference_steps', 40)
     safety = data.get('safety', True)
 
     try:

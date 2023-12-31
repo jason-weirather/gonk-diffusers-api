@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  title: Image Slinger API
+  description: API for generating and processing images.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/
+    description: Local development server
+
+paths:
+  /generate-image:
+    post:
+      summary: Generate an image based on provided parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: The model to use for generating the image. Default is "dataautogpt3/OpenDalleV1.1".
+                  default: "dataautogpt3/OpenDalleV1.1"
+                prompt:
+                  type: string
+                  description: The prompt based on which the image is generated
+                negative_prompt:
+                  type: string
+                  description: The negative prompt for image generation. Default is an empty string.
+                  default: ""
+                width:
+                  type: integer
+                  description: Width of the generated image. Default is 512.
+                  default: 512
+                height:
+                  type: integer
+                  description: Height of the generated image. Default is 512.
+                  default: 512
+                image_type:
+                  type: string
+                  description: The type/format of the generated image (png, jpeg). Default is "png".
+                  default: "png"
+                num_inference_steps:
+                  type: integer
+                  description: Number of inference steps for the generation process. Default is 40.
+                  default: 40
+                safety:
+                  type: boolean
+                  description: Flag to enable safety blurring on the generated image. Default is true.
+                  default: true
+              required:
+                - model
+                - prompt
+      responses:
+        '200':
+          description: Image generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    format: byte
+                    description: Base64 encoded image
+                  safety_classification:
+                    type: string
+                    description: Safety classification of the image
+                  mime_type:
+                    type: string
+                    description: MIME type of the generated image
+        '500':
+          description: Error in generating image
+
+  /status:
+    get:
+      summary: Get the status of the server and CUDA availability
+      responses:
+        '200':
+          description: Status information of the server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cuda_available:
+                    type: boolean
+                    description: Indicates if CUDA is available
+                  cuda_device_count:
+                    type: integer
+                    description: Number of CUDA devices available
+                  current_cuda_device_info:
+                    type: object
+                    properties:
+                      current_cuda_device:
+                        type: integer
+                      cuda_device_name:
+                        type: string
+                      max_memory:
+                        type: integer
+                      available_memory:
+                        type: integer
+                required:
+                  - cuda_available
+                  - cuda_device_count
+                  - current_cuda_device_info
