@@ -42,6 +42,7 @@ else:
 ## Features
 - **Stable Diffusion Compatibility**: Utilizes models compatible with Stable Diffusion for high-quality image generation.
 - **CUDA GPU Acceleration**: Optimized for use with CUDA-compatible NVIDIA GPUs.
+- **On-by-default Safety**: Leverages the [Falconsai/nsfw_image_detection](https://huggingface.co/Falconsai/nsfw_image_detection) to detect NSFW outputs and by default will apply a blur to these images.
 - **Concurrency Control**: Manages multiple simultaneous requests with built-in concurrency control.
 - **Interactive Swagger Documentation**: Includes Swagger UI for easy interaction with the API.
 
