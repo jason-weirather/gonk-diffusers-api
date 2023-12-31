@@ -67,7 +67,7 @@ response = requests.post(url, json=data)
 # Handle the response...
 ```
 
-<img src="https://imgur.com/BEjjkQ5" width="512" height="512" alt="Example image">
+<img src="https://i.imgur.com/BEjjkQ5.png" width="512" height="512" alt="Example image">
 
 
 ### Authentication
