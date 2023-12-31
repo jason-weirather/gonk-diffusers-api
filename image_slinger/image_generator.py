@@ -3,6 +3,7 @@ from transformers import AutoModelForImageClassification, ViTImageProcessor
 from PIL import ImageFilter
 import torch
 import gc
+import os
 
 # Constants for safety model and image processing
 safety_model = 'Falconsai/nsfw_image_detection'
@@ -16,12 +17,27 @@ def load_model(app, model_name: str):
         unload_model(app)
 
     # Load the primary model
-    app.global_model = StableDiffusionXLPipeline.from_pretrained(model_name, torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
+    app.global_model = StableDiffusionXLPipeline.from_pretrained(
+        model_name,
+        torch_dtype=torch.float16,
+        use_safetensors=True,
+        variant="fp16",
+        local_files_only = True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
+        cache_dir = None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+    )
     app.global_model.to("cuda")
 
     # Load the safety model and processor
-    app.global_safety_model = AutoModelForImageClassification.from_pretrained(safety_model)
-    app.global_safety_processor = ViTImageProcessor.from_pretrained(safety_model)
+    app.global_safety_model = AutoModelForImageClassification.from_pretrained(
+        safety_model,
+        local_files_only = True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
+        cache_dir = None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+    )
+    app.global_safety_processor = ViTImageProcessor.from_pretrained(
+        safety_model,
+        local_files_only = True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
+        cache_dir = None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+    )
 
 def unload_model(app):
     """Unload models from the application context and clear CUDA cache."""
