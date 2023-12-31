@@ -1,7 +1,3 @@
-Certainly! Here's a revised version of the `README.md` for your project, tailored for the Apache License 2.0. You can copy and paste this into your project's README file:
-
----
-
 # Image-Slinger
 
 Image-Slinger is a Python API transforms text prompts into vivid images using machine learning models compatible with Stable Diffusion. It's specifically optimized for CUDA-enabled GPUs, providing efficient processing and image generation.
@@ -57,7 +53,7 @@ else:
 ## Installation
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/image-slinger.git
+   git clone https://github.com/jason-weirather/image-slinger.git
    ```
 2. **Navigate to the Project Directory**:
    ```bash
@@ -93,7 +89,3 @@ Access the interactive API documentation by navigating to `http://localhost:8000
 
 ## License
 This project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-
----
-
-Feel free to modify or add any sections to better describe your project or provide additional information. Remember to replace `https://github.com/your-username/image-slinger.git` with the actual URL of your repository.
