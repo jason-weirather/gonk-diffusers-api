@@ -8,6 +8,26 @@ Image-Slinger is a Python API transforms text prompts into vivid images using ma
 
 The goal is to simplify the process of exposing CUDA-compatible NVIDIA GPUs with limited memory resources through an API, it can be accessed with concurency control and memory cleanup so you can use your own GPU resources as simply as API services provided by services like OpenAI and Stability AI.
 
+#### Example Request
+```python
+import requests
+
+url = 'http://localhost:8000/generate-image'
+data = {
+    'model': 'dataautogpt3/OpenDalleV1.1',
+    'prompt': 'Aerial view of a futuristic cityscape getting tip-toed on by a giant kitten acting like godzilla',
+    'negative_prompt': "(worst quality, low quality, simpsons hands)",
+    'width': 1024,
+    'height': 1024,
+    'image_type': 'png',
+    'num_inference_steps': 40,
+    'safety': True
+}
+response = requests.post(url, json=data)
+# Handle the response...
+```
+<img src="https://i.imgur.com/BEjjkQ5.png" width="300" height="300" alt="Example image">
+
 ## Features
 - **Stable Diffusion Compatibility**: Utilizes models compatible with Stable Diffusion for high-quality image generation.
 - **CUDA GPU Acceleration**: Optimized for use with CUDA-compatible NVIDIA GPUs.
@@ -48,26 +68,6 @@ Optional CLI arguments:
 - **POST `/generate-image`**: Generates an image from a given text prompt.
 - **GET `/status`**: Retrieves the server and CUDA status.
 
-#### Example Request
-```python
-import requests
-
-url = 'http://localhost:8000/generate-image'
-data = {
-    'model': 'dataautogpt3/OpenDalleV1.1',
-    'prompt': 'Aerial view of a futuristic cityscape getting tip-toed on by a giant kitten acting like godzilla',
-    'negative_prompt': "(worst quality, low quality, simpsons hands)",
-    'width': 1024,
-    'height': 1024,
-    'image_type': 'png',
-    'num_inference_steps': 40,
-    'safety': True
-}
-response = requests.post(url, json=data)
-# Handle the response...
-```
-
-<img src="https://i.imgur.com/BEjjkQ5.png" width="512" height="512" alt="Example image">
 
 
 ### Authentication
