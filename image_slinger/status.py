@@ -5,7 +5,6 @@ def check_cuda_status(app):
         "cuda_available": torch.cuda.is_available(),
         "cuda_device_count": torch.cuda.device_count(),
         "current_cuda_device_info": {},
-        "model_info": {}
     }
 
     if status_info["cuda_available"]:
@@ -17,6 +16,4 @@ def check_cuda_status(app):
             "available_memory": torch.cuda.get_device_properties(current_cuda_device).total_memory - torch.cuda.memory_allocated(current_cuda_device)
         })
 
-    if hasattr(app, 'global_model') and app.global_model is not None:
-        status_info['model_info'].update(dict(app.global_model.config))
     return status_info

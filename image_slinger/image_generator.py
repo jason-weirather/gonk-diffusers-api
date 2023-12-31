@@ -1,7 +1,7 @@
 from diffusers import StableDiffusionXLPipeline, DDIMScheduler
 from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+from diffusers import StableDiffusionUpscalePipeline
 from transformers import pipeline, AutoModelForImageClassification, ViTImageProcessor
-from .status import check_cuda_status
 from PIL import Image, ImageFilter
 import torch
 import gc
@@ -31,6 +31,7 @@ def load_model(app, model_name: str):
         )
         print(f"Loaded model in function with model {app.global_model.config._name_or_path}")
         app.global_model.to("cuda")
+        #app.global_model.enable_attention_slicing()
         print(f"{type(app.global_model)}")
 
     # Lets load our safety model
@@ -52,12 +53,7 @@ def unload_model(app):
 
 def generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety, autoclean):
     # See if our model is loaded
-    status = check_cuda_status(app)
-    print(status)
-    if not hasattr(app,'global_model') or '_name_or_path' not in status['model_info'] or status['model_info']['_name_or_path'] != model:
-        # Load model at runtime if we need to
-        print('model has not been loaded')
-        load_model(app,model)
+    load_model(app,model)
 
 
     # Generate the image using the model
@@ -80,11 +76,12 @@ def generate_image(app, model, prompt, negative_prompt, width, height, num_infer
     predicted_label = logits.argmax(-1).item()
     print("second level")
     print(app.global_safety_model.config.id2label[predicted_label])
-
     safety_label = app.global_safety_model.config.id2label[predicted_label]
-    blur_size = max(min_blur_size,5+int(max(height,width)*blur_fraction))
+
     if autoclean:
         unload_model(app)
+
+    blur_size = max(min_blur_size,5+int(max(height,width)*blur_fraction))
     if 'nsfw' == safety_label:
         # Apply blur if NSFW
         if safety:
@@ -94,6 +91,7 @@ def generate_image(app, model, prompt, negative_prompt, width, height, num_infer
             return generated_image, 'nsfw'
     else:
         return generated_image, 'normal'
+
 
     print(type(generated_image))
     return generated_image, safety_label
