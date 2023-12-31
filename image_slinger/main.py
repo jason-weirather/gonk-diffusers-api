@@ -5,48 +5,38 @@ import io
 import base64
 from threading import Lock
 
+# Initialize the lock for synchronizing image generation requests
 generate_image_lock = Lock()
 
+# Default model to be used if not specified in the request
 default_model = "dataautogpt3/OpenDalleV1.1"
 
+# Initialize Flask application
 app = Flask(__name__)
-app.global_model = None
-app.global_safety_model = None
-app.global_safety_processor = None
 
+# Routes
 @app.route('/status', methods=['GET'])
 def status():
+    """Endpoint to get the current status of the server."""
     return jsonify(check_cuda_status(app))
-
-#@app.route('/unload-model', methods=['DELETE'])
-#def unload_model_endpoint():
-#    unload_model(app)
-#    return jsonify({"message": "Model unloaded successfully"})
-
-#@app.route('/load-model', methods=['POST'])
-#def load_model_endpoint():
-#    data = request.json
-#    model_name = data.get('model_name', default_model)
-#    load_model(app, model_name)
-#    return jsonify({"message": f"Model '{model_name}' loaded successfully"})
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image_endpoint():
+    """Endpoint to generate an image based on the provided parameters."""
     data = request.json
-    model = data.get('model',default_model)
+    model = data.get('model', default_model)
     prompt = data.get('prompt')
     negative_prompt = data.get('negative_prompt', '')
-    width = data.get('width', 512)  # default values if not specified
-    height = data.get('height', 512)
-    image_type = data.get('image_type', 'png').lower() # png or jepg
+    width = data.get('width', 512)  # Default width if not specified
+    height = data.get('height', 512)  # Default height if not specified
+    image_type = data.get('image_type', 'png').lower()  # Default to PNG if not specified
     num_inference_steps = data.get('num_inference_steps', 50)
-    safety = data.get('safety',True)
-    autoclean = data.get('autoclean',True)
+    safety = data.get('safety', True)
 
     try:
         with generate_image_lock:
-            image, safety_classification = generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety, autoclean)
-        # Assuming image is a PIL image, convert it to bytes
+            image, safety_classification = generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety)
+        # Convert image to bytes
         img_byte_arr = io.BytesIO()
         if image_type == 'jpeg' or image_type == 'jpg':
             image.save(img_byte_arr, format='JPEG')
@@ -64,3 +54,6 @@ def generate_image_endpoint():
         })
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run()
