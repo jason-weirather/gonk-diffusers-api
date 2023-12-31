@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, abort
 from image_slinger.image_generator import generate_image, load_model, unload_model
 from image_slinger.status import check_cuda_status
 import io
@@ -22,7 +22,7 @@ def get_static_dir():
 app.static_folder = get_static_dir()
 
 # Swagger UI configuration
-SWAGGER_URL = '/swagger'
+SWAGGER_URL = '/docs'
 API_URL = '/static/openapi.yaml'
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
@@ -30,6 +30,15 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     config={'app_name': "Image Slinger API"},
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+@app.before_request
+def authenticate():
+    excluded_paths = ['/docs','/static']
+    if not any(request.path.startswith(path) for path in excluded_paths):
+        if app.config.get('REQUIRE_AUTH', False):
+            api_key = request.headers.get('Authorization')
+            if not api_key or api_key != app.config['API_KEY']:
+                abort(401, description="Unauthorized: API key required")
 
 @app.route('/static/<path:path>')
 def send_static(path):
