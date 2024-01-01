@@ -54,6 +54,8 @@ $ docker run --runtime=nvidia \
              --hf-local-files-only
 ```
 
+Note: The `huggingface-hub-cache` refers to the directory holding the `models--..` folders.
+
 ## Features
 - **Stable Diffusion Compatibility**: Utilizes models compatible with Stable Diffusion for high-quality image generation.
 - **CUDA GPU Acceleration**: Optimized for use with CUDA-compatible NVIDIA GPUs.
