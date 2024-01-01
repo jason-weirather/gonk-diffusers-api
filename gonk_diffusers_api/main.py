@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory, abort
-from image_slinger.image_generator import generate_image, load_model, unload_model
-from image_slinger.status import check_cuda_status
+from .image_generator import generate_image, load_model, unload_model
+from .status import check_cuda_status
 import io
 import base64
 import os

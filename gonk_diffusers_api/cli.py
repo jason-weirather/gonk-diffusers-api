@@ -1,11 +1,11 @@
 import os
 import argparse
-from image_slinger.main import app
+from gonk_diffusers_api.main import app
 
 def start_server(host, port, require_auth, hf_local_files_only, hf_cache_path=None):
     if require_auth:
         app.config['REQUIRE_AUTH'] = True
-        app.config['API_KEY'] = os.environ.get('IMAGE_SLINGER_API_KEY')
+        app.config['API_KEY'] = os.environ.get('GONK_DIFFUSERS_API_KEY')
 
     # Set Hugging Face cache directory if specified
     if hf_cache_path:
@@ -19,7 +19,7 @@ def start_server(host, port, require_auth, hf_local_files_only, hf_cache_path=No
     app.run(host=host, port=port)
 
 def main():
-    parser = argparse.ArgumentParser(description="Start the Image Slinger Flask server.",
+    parser = argparse.ArgumentParser(description="Start the gonk-diffusers-api Flask server.",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-H", "--host", type=str, default="0.0.0.0", help="Host to run the server on")
     parser.add_argument("-p", "--port", type=int, default=8000, help="Port to run the server")

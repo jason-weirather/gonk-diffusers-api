@@ -1,8 +1,6 @@
-# Image-Slinger
+# gonk-diffusers-api
 
-Image-Slinger is a Python API transforms text prompts into vivid images using machine learning models compatible with Stable Diffusion. It's specifically optimized for CUDA-enabled GPUs, providing efficient processing and image generation.
-
-The goal is to simplify the process of exposing CUDA-compatible NVIDIA GPUs with limited memory resources through an API, it can be accessed with concurency control and memory cleanup so you can use your own GPU resources as simply as API services provided by services like OpenAI and Stability AI.
+gonk-diffusers-api allows you to hostan API server to transforms text prompts into vivid images using machine learning models compatible with Huggingface's Stable Diffusion diffusers library. It's specifically optimized for CUDA-enabled GPUs on a small scale hardware where memory conservation and 1-by-1 processing of incoming requests is desiarable.
 
 #### Example request in a Jupyter notebook
 ```python
@@ -54,11 +52,11 @@ else:
 ## Installation
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/jason-weirather/image-slinger.git
+   git clone https://github.com/jason-weirather/gonk-diffusers-api.git
    ```
 2. **Navigate to the Project Directory**:
    ```bash
-   cd image-slinger
+   cd gonk-diffusers-api
    ```
 3. **Install Dependencies**:
    ```bash
@@ -69,7 +67,7 @@ else:
 ### Starting the Server
 Start the server using the CLI:
 ```bash
-python -m image_slinger.cli
+python -m gonk-diffusers-api.cli
 ```
 Optional CLI arguments:
 - `-H`, `--host`: Host address (default `0.0.0.0`).
@@ -83,7 +81,7 @@ Optional CLI arguments:
 
 
 ### Authentication
-To enable API authentication, set the `IMAGE_SLINGER_API_KEY` environment variable and start the server with the `--require-auth` flag.
+To enable API authentication, set the `GONK_DIFFUSERS_API_KEY` environment variable and start the server with the `--require-auth` flag.
 
 ### API Documentation
 Access the interactive API documentation by navigating to `http://localhost:8000/docs`.
