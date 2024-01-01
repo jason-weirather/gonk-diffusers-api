@@ -6,20 +6,20 @@ def load_requirements(filename='requirements.txt'):
         return file.read().splitlines()
 
 setup(
-    name='image-slinger',
+    name='gonk-diffusers-api',
     version='0.1.0',
     author='Jason L Weirather',
     author_email='jason.weirather@gmail.com',
     description='A Python API for generating images with Stable Diffusion model',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/jason-weirather/ImageSlinger',
+    url='https://github.com/jason-weirather/gonk-diffusers-api',
     packages=find_packages(),
     install_requires=load_requirements(),
 
     entry_points={
         'console_scripts': [
-            'image-slinger=image_slinger.cli:main',
+            'gonk-diffusers-api=gonk_diffusers_api.cli:main',
         ],
     },
 

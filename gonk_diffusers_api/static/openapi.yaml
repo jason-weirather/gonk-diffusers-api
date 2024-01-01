@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
-  title: Image Slinger API
-  description: API for generating and processing images.
+  title: gonk-diffusers-api
+  description: A small scale API for generating images using CUDA compatible hardware.
   version: 1.0.0
 
 servers:
-  - url: http://localhost:5000/
+  - url: http://localhost:8000/
     description: Local development server
 
 paths:
