@@ -74,6 +74,6 @@ def generate_image(app, model, prompt, negative_prompt, width, height, num_infer
     blur_size = max(min_blur_size, int(max(height, width) * blur_fraction))
     if 'nsfw' == safety_label and safety:
         blurred_image = generated_image.filter(ImageFilter.GaussianBlur(radius=blur_size))
-        return blurred_image, 'nsfw'
+        return blurred_image, safety_label
     else:
-        return generated_image, 'normal'
+        return generated_image, safety_label

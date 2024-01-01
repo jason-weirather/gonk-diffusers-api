@@ -2,6 +2,10 @@ import os
 import argparse
 from gonk_diffusers_api.main import app
 
+def str_to_bool(value):
+    """Converts a string to a boolean."""
+    return value.lower() in ('true', '1', 't', 'y', 'yes')
+
 def start_server(host, port, require_auth, hf_local_files_only, hf_cache_path=None):
     if require_auth:
         app.config['REQUIRE_AUTH'] = True
@@ -16,7 +20,35 @@ def start_server(host, port, require_auth, hf_local_files_only, hf_cache_path=No
     else:
         os.environ['HF_LOCAL_FILES_ONLY'] = "NO"
 
-    app.run(host=host, port=port)
+
+    # Check if USE_GUNICORN environment variable is set to 'true'
+    use_gunicorn = str_to_bool(os.environ.get('USE_GUNICORN', 'false'))
+
+    if use_gunicorn:
+        from gunicorn.app.base import BaseApplication
+
+        class FlaskApplication(BaseApplication):
+            def __init__(self, app, options=None):
+                self.options = options or {}
+                self.application = app
+                super().__init__()
+
+            def load_config(self):
+                config = {key: value for key, value in self.options.items()
+                          if key in self.cfg.settings and value is not None}
+                for key, value in config.items():
+                    self.cfg.set(key.lower(), value)
+
+            def load(self):
+                return self.application
+        options = {
+            'bind': f'{host}:{port}',
+            'workers': 1,  # Adjust as needed
+            'timeout': 240
+        }
+        FlaskApplication(app, options).run()
+    else:
+        app.run(host=host, port=port)
 
 def main():
     parser = argparse.ArgumentParser(description="Start the gonk-diffusers-api Flask server.",

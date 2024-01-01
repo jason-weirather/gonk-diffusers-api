@@ -37,6 +37,23 @@ else:
 ```
 <img src="https://i.imgur.com/BEjjkQ5.png" width="300" height="300" alt="Example image">
 
+## Running the Docker
+
+Build the docker image
+```bash
+$ docker build --no-cache -t gonk-diffusers-api .
+```
+
+Then run the container, be sure nvidia docker runtime is installed.
+```bash
+$ docker run --runtime=nvidia \
+             --rm -p 8000:8000 \
+             -v /path/to/huggingface-hub-cache:/path/to/huggingface-hub-cache \
+             gonk-diffusers-api \
+             --hf-cache-path /path/to/huggingface-hub-cache \
+             --hf-local-files-only
+```
+
 ## Features
 - **Stable Diffusion Compatibility**: Utilizes models compatible with Stable Diffusion for high-quality image generation.
 - **CUDA GPU Acceleration**: Optimized for use with CUDA-compatible NVIDIA GPUs.
