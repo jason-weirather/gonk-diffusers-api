@@ -1,6 +1,6 @@
 # gonk-diffusers-api
 
-gonk-diffusers-api allows you to hostan API server to transforms text prompts into vivid images using machine learning models compatible with Huggingface's Stable Diffusion diffusers library. It's specifically optimized for CUDA-enabled GPUs on a small scale hardware where memory conservation and 1-by-1 processing of incoming requests is desiarable.
+An API server to transform text into images using using the diffusers library on CUDA hardware.
 
 #### Example request in a Jupyter notebook
 ```python
@@ -39,9 +39,9 @@ else:
 
 ## Running the Docker
 
-Build the docker image
+Pull the docker image
 ```bash
-$ docker build --no-cache -t gonk-diffusers-api .
+$ docker pull vacation/gonk-diffusers-api:latest
 ```
 
 Then run the container, be sure nvidia docker runtime is installed.
@@ -49,7 +49,7 @@ Then run the container, be sure nvidia docker runtime is installed.
 $ docker run --runtime=nvidia \
              --rm -p 8000:8000 \
              -v /path/to/huggingface-hub-cache:/path/to/huggingface-hub-cache \
-             gonk-diffusers-api \
+             vacation/gonk-diffusers-api:latest \
              --hf-cache-path /path/to/huggingface-hub-cache \
              --hf-local-files-only
 ```
