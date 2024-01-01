@@ -1,13 +1,12 @@
 from setuptools import setup, find_packages
 
-# Function to read the list of dependencies from requirements.txt
 def load_requirements(filename='requirements.txt'):
     with open(filename, 'r') as file:
         return file.read().splitlines()
 
 setup(
     name='gonk-diffusers-api',
-    version='0.1.0',
+    version='1.0.0',
     author='Jason L Weirather',
     author_email='jason.weirather@gmail.com',
     description='A Python API for generating images with Stable Diffusion model',
@@ -16,6 +15,11 @@ setup(
     url='https://github.com/jason-weirather/gonk-diffusers-api',
     packages=find_packages(),
     install_requires=load_requirements(),
+
+    # Include additional files into the package
+    package_data={
+        'gonk_diffusers_api': ['static/*'],
+    },
 
     entry_points={
         'console_scripts': [
@@ -30,4 +34,3 @@ setup(
     ],
     python_requires='>=3.7',
 )
-
