@@ -56,7 +56,7 @@ def main():
     parser.add_argument("-H", "--host", type=str, default="0.0.0.0", help="Host to run the server on")
     parser.add_argument("-p", "--port", type=int, default=8000, help="Port to run the server")
     parser.add_argument("--require-auth", action='store_true', help="Enable API key authentication")
-    parser.add_argument("--hf-cache-path", type=str, help="Path to the Huggingface cache directory")
+    parser.add_argument("--hf-cache-path", type=str, help="Path to the Huggingface cache directory, the directory containing the 'models' folders")
     parser.add_argument("--hf-local-files-only", action='store_true', help="Only use locally cached models")
 
     args = parser.parse_args()
