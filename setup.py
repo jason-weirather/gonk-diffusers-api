@@ -6,7 +6,7 @@ def load_requirements(filename='requirements.txt'):
 
 setup(
     name='gonk-diffusers-api',
-    version='1.0.0',
+    version='1.1.0',
     author='Jason L Weirather',
     author_email='jason.weirather@gmail.com',
     description='A Python API for generating images with Stable Diffusion model',
