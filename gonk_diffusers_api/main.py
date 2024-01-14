@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory, abort
-from .image_generator import generate_image, load_model, unload_model
+from .image_generator import generate_image
 from .status import check_cuda_status
 import io
 import base64
@@ -64,9 +64,12 @@ def generate_image_endpoint():
     num_inference_steps = data.get('num_inference_steps', 40)
     safety = data.get('safety', True)
 
+    vae_model = data.get('vae_model', None)
+    scheduler = data.get('scheduler', None)
+
     try:
         with generate_image_lock:
-            image, safety_classification = generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety)
+            image, safety_classification = generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety, vae_model, scheduler)
         # Convert image to bytes
         img_byte_arr = io.BytesIO()
         if image_type == 'jpeg' or image_type == 'jpg':

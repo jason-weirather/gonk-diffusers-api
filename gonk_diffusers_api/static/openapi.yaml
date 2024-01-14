@@ -46,6 +46,14 @@ paths:
                   type: integer
                   description: Number of inference steps for the generation process. Default is 40.
                   default: 40
+                vae_model:
+                  type: string
+                  description: If set specify the model string for variational autoencoder (VAE)
+                scheduler:
+                  type: string
+                  description: If set specify the model string for variational autoencoder (VAE)
+                  enum:
+                    - "EulerAncestralDiscrete"
                 safety:
                   type: boolean
                   description: Flag to enable safety blurring on the generated image. Default is true.

@@ -1,4 +1,4 @@
-from diffusers import StableDiffusionXLPipeline
+from diffusers import StableDiffusionXLPipeline, EulerAncestralDiscreteScheduler, AutoencoderKL
 from transformers import AutoModelForImageClassification, ViTImageProcessor
 from PIL import ImageFilter
 import torch
@@ -10,21 +10,35 @@ safety_model = 'Falconsai/nsfw_image_detection'
 min_blur_size = 15
 blur_fraction = 0.05
 
-def load_model(app, model_name: str):
+def load_model(app, model_name: str, vae_model: str, scheduler: str):
     """Load the specified model into the application context."""
     # Check if a different model is already loaded and needs to be unloaded
     if hasattr(app, 'global_model') and app.global_model is not None and app.global_model.config._name_or_path != model_name:
         unload_model(app)
 
+    # Load VAE component
+    vae = None
+    if vae_model is not None:
+        vae = AutoencoderKL.from_pretrained(
+            vae_model,
+            torch_dtype=torch.float16
+        )
+
     # Load the primary model
     app.global_model = StableDiffusionXLPipeline.from_pretrained(
         model_name,
+        vae = vae,
         torch_dtype=torch.float16,
         use_safetensors=True,
-        variant="fp16",
+        #variant="fp16",
         local_files_only = True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
         cache_dir = None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
     )
+    if scheduler and scheduler == "EulerAncestralDiscrete":
+        app.global_model.scheduler = EulerAncestralDiscreteScheduler.\
+            from_config(app.global_model.scheduler.config)
+    elif scheduler:
+        raise ValueError(f"Unsupported scheduler selected {scheduler}")
     app.global_model.to("cuda")
 
     # Load the safety model and processor
@@ -50,10 +64,10 @@ def unload_model(app):
     app.global_safety_processor = None
     gc.collect()
 
-def generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety):
+def generate_image(app, model, prompt, negative_prompt, width, height, num_inference_steps, safety, vae_model, scheduler):
     """Generate an image using the specified parameters and model."""
     # Load model
-    load_model(app, model)
+    load_model(app, model, vae_model, scheduler)
 
     # Generate the image
     results = app.global_model(prompt=prompt, negative_prompt=negative_prompt, width=width, height=height, num_inference_steps=num_inference_steps)
