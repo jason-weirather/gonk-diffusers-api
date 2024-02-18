@@ -10,7 +10,7 @@ safety_model = 'Falconsai/nsfw_image_detection'
 min_blur_size = 15
 blur_fraction = 0.05
 
-def load_model(app, model_name: str, vae_model: str, scheduler: str):
+def load_model(app, model_name: str, vae_model: str = None, scheduler: str = None):
     """Load the specified model into the application context."""
     # Check if a different model is already loaded and needs to be unloaded
     if hasattr(app, 'global_model') and app.global_model is not None and app.global_model.config._name_or_path != model_name:
@@ -24,15 +24,20 @@ def load_model(app, model_name: str, vae_model: str, scheduler: str):
             torch_dtype=torch.float16
         )
 
+    params = {
+        'torch_dtype':torch.float16,
+        'use_safetensors':True,
+        #variant="fp16",
+        'local_files_only': True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
+        'cache_dir': None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+    }
+    if vae is not None:
+        params['vae'] = vae
+
     # Load the primary model
     app.global_model = StableDiffusionXLPipeline.from_pretrained(
         model_name,
-        vae = vae,
-        torch_dtype=torch.float16,
-        use_safetensors=True,
-        #variant="fp16",
-        local_files_only = True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
-        cache_dir = None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+        **params
     )
     if scheduler and scheduler == "EulerAncestralDiscrete":
         app.global_model.scheduler = EulerAncestralDiscreteScheduler.\
