@@ -16,21 +16,20 @@ def load_model(app, model_name: str, vae_model: str = None, scheduler: str = Non
     if hasattr(app, 'global_model') and app.global_model is not None and app.global_model.config._name_or_path != model_name:
         unload_model(app)
 
+    params = {
+        'torch_dtype':torch.float16,
+        'use_safetensors':True,
+        'local_files_only': True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
+        'cache_dir': None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
+    }
     # Load VAE component
     vae = None
     if vae_model is not None:
         vae = AutoencoderKL.from_pretrained(
             vae_model,
-            torch_dtype=torch.float16
+            **params
         )
 
-    params = {
-        'torch_dtype':torch.float16,
-        'use_safetensors':True,
-        #variant="fp16",
-        'local_files_only': True if os.environ['HF_LOCAL_FILES_ONLY'] == "YES" else False,
-        'cache_dir': None if 'HF_CACHE_PATH' not in os.environ else os.environ['HF_CACHE_PATH']
-    }
     if vae is not None:
         params['vae'] = vae
 
